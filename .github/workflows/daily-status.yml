@@ -1,9 +1,10 @@
 name: Daily Repo Status Report
 
 on:
+  workflow_dispatch:
   schedule:
-    - cron: "0 18 * * *"   # Runs daily at 18:00 UTC
-  workflow_dispatch:       # Manual run option
+    - cron: '0 9 * * *'
+
 
 jobs:
   daily-report:
