@@ -1,0 +1,20 @@
+name: Daily Repo Status Report 
+
+on:
+    schedule:
+        - cron: "0 18 * * *"
+    workflow_dispatch:
+
+jobs:
+    report:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repo
+              run: |
+                echo "Daily repo report"
+                echo "Date: $(date)"
+                echo ""
+                echo "Recent commitss:"
+                git log --since="24 hours ago" --oneline || true
+
+        
