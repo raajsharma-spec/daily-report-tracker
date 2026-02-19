@@ -1,24 +1,39 @@
-name: Daily Repo Status Report 
+name: Daily Repo Status Report
 
 on:
-    schedule:
-        - cron: "0 18 * * *"
-    workflow_dispatch:
+  schedule:
+    - cron: "0 18 * * *"   # Runs daily at 18:00 UTC
+  workflow_dispatch:       # Manual run option
 
 jobs:
-    report:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout Repo
-              run: |
-                echo "Daily repo report"
-                echo "Date: $(date)"
-                echo ""
-                echo "Recent commitss:"
-                git log --since="24 hours ago" --oneline || true
+  daily-report:
+    runs-on: ubuntu-latest
 
-                - name: Run AI Summary
-                   run: python agent.py
-  
+    steps:
+      # Step 1: Download repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-        
+      # Step 2: Setup Python (needed for agent)
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      # Step 3: Install dependencies (optional)
+      - name: Install Dependencies
+        run: |
+          pip install requests
+
+      # Step 4: Generate Basic Report
+      - name: Generate Daily Report
+        run: |
+          echo "===== DAILY REPO STATUS ====="
+          echo "Date: $(date)"
+          echo ""
+          echo "Recent Commits:"
+          git log --since="24 hours ago" --oneline || true
+
+      # Step 5: Run AI Agent Summary  ✅ HERE
+      - name: Run AI Summary
+        run: python agent.py
