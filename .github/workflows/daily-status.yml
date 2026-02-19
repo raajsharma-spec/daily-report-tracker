@@ -17,4 +17,8 @@ jobs:
                 echo "Recent commitss:"
                 git log --since="24 hours ago" --oneline || true
 
+                - name: Run AI Summary
+                   run: python agent.py
+  
+
         
