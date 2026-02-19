@@ -37,6 +37,14 @@ jobs:
           echo ""
           echo "Recent Commits:"
           git log --since="24 hours ago" --oneline || true
+      - name: Install Dependencies
+        run: |
+          pip install requests openai
+
+      - name: Run AI Summary
+        env:
+           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python agent.py
 
       # Step 5: Run AI Agent Summary  ✅ HERE
       - name: Run AI Summary
