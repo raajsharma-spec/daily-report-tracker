@@ -1,51 +1,45 @@
-name: Daily Repo Status Report
+ame: Agentic daily repo report
 
 on:
-  push:
-    branches: [ main ]
-
-  workflow_dispatch:
   schedule:
+    # run each day at 09:00 UTC
     - cron: '0 9 * * *'
-
+  workflow_dispatch:
 
 jobs:
-  daily-report:
+  agentic:
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Download repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # Step 2: Setup Python (needed for agent)
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Run agentic workflow
+        uses: github/agentic-workflows@main
         with:
-          python-version: "3.10"
-
-      # Step 3: Install dependencies (optional)
-      - name: Install Dependencies
-        run: |
-          pip install requests
-
-      # Step 4: Generate Basic Report
-      - name: Generate Daily Report
-        run: |
-          echo "===== DAILY REPO STATUS ====="
-          echo "Date: $(date)"
-          echo ""
-          echo "Recent Commits:"
-          git log --since="24 hours ago" --oneline || true
-      - name: Install Dependencies
-        run: |
-          pip install requests openai
-
-      - name: Run AI Summary
-        env:
-           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }} }}
-        run: python agent.py
-
-      # Step 5: Run AI Agent Summary  ✅ HERE
-      - name: Run AI Summary
-        run: python agent.py
+          workflow: |
+            # see https://raw.githubusercontent.com/github/gh-aw/main/create.md
+            name: daily-report
+            description: |
+              Gather commits pushed in the last 24 hours, ask an AI agent
+              to summarise them, and create an issue containing the summary.
+            agents:
+              - id: repo-agent
+                type: github
+            steps:
+              - id: gather_commits
+                name: collect recent commits
+                run: |
+                  git log --since="24 hours ago" --oneline > commits.txt
+              - id: summarize
+                name: generate summary via Python agent
+                run: |
+                  python agent.py > report.txt
+                env:
+                  GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+              - id: create_issue
+                name: post summary as an issue
+                run: |
+                  gh issue create \
+                    --title "Daily repository activity report – $(date +%F)" \
+                    --body-file report.txt
+                env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
