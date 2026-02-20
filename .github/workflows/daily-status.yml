@@ -43,7 +43,7 @@ jobs:
 
       - name: Run AI Summary
         env:
-           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }} }}
         run: python agent.py
 
       # Step 5: Run AI Agent Summary  ✅ HERE
