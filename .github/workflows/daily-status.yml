@@ -1,4 +1,4 @@
-ame: Agentic daily repo report
+name: Agentic daily repo report
 
 on:
   schedule:
@@ -42,4 +42,4 @@ jobs:
                     --title "Daily repository activity report – $(date +%F)" \
                     --body-file report.txt
                 env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}s
